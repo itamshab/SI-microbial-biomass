@@ -1,0 +1,62 @@
+---
+title: 
+author: 
+date: "`r Sys.Date()`"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+# Packages
+library(tidyverse)
+library(here)
+# Parameters
+  file_data <- here("/data/mbc_data.rds")
+#===========================================================================
+
+# Code
+  df <- read_rds(file_data)
+```
+
+## K2SO4 0.05 M Extractable DOC
+```{r DOC, echo=FALSE, warning = FALSE}
+p1 <- ggplot(df, aes(treatment, fum_C_mg_g)) + 
+  geom_boxplot(aes(treatment, fum_C_mg_g, fill = day)) + 
+  facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
+  geom_point(aes(treatment, fum_C_mg_g, fill = day), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+  labs(x = "Preincubation treatment", y = "Extractable DOC (mg/g soil)") +
+  theme_bw() + scale_fill_brewer(palette = "Set1")
+p1
+```
+
+## Microbial biomass C
+```{r MBC, echo = FALSE, warnings = FALSE}
+p3 <- ggplot(df, aes(treatment, MBC_mg_g_soil)) + 
+  geom_boxplot(aes(treatment, MBC_mg_g_soil, fill = day)) + 
+  facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
+  geom_point(aes(treatment, MBC_mg_g_soil, fill = day), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+  labs(x = "Preincubation treatment", y = "Microbial biomass C (mg/g soil)") +
+  theme_bw() + scale_fill_brewer(palette = "Set1")
+p3
+```
+
+## Extracted and fumigated C
+```{r fumigated, echo = FALSE, warnings = FALSE}
+p2 <- ggplot(mbc_data, aes(treatment, unfum_C_mg_g)) + 
+  geom_boxplot(aes(treatment, unfum_C_mg_g, fill = day)) + 
+  facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
+  geom_point(aes(treatment, unfum_C_mg_g, fill = day), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 3, shape = 21) +
+  labs(x = "Preincubation treatment", y = "Extractable and fumigated C (mg/g soil)") +
+  theme_bw() + scale_fill_brewer(palette = "Set1")
+p2
