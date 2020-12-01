@@ -15,25 +15,59 @@ knitr::opts_chunk$set(echo = TRUE)
 # Packages
 library(tidyverse)
 library(here)
+
 # Parameters
   file_data <- here("/data/mbc_data.rds")
+  
 #===========================================================================
 
 # Code
   df <- read_rds(file_data)
+  
+  df_beg <- df %>% 
+    filter(day == "Beginning" & water_content != "non-incubated")
+  
+  df_end <- df %>% 
+    filter(day == "End" & water_content != "non-incubated")
+ 
 ```
 
 ## K2SO4 0.05 M Extractable DOC
 ```{r DOC, echo=FALSE, warning = FALSE}
-p1 <- ggplot(df, aes(treatment, fum_C_mg_g)) + 
-  geom_boxplot(aes(treatment, fum_C_mg_g, fill = day)) + 
+p1 <- ggplot(df, aes(treatment, unfum_C_mg_g)) + 
+  geom_boxplot(aes(treatment, unfum_C_mg_g, fill = day)) + 
   facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
-  geom_point(aes(treatment, fum_C_mg_g, fill = day), 
+  geom_point(aes(treatment, unfum_C_mg_g, fill = day), 
              position = position_jitterdodge(jitter.width = 0.1),
              alpha = 0.5, size = 2, shape = 21) +
   labs(x = "Preincubation treatment", y = "Extractable DOC (mg/g soil)") +
   theme_bw() + scale_fill_brewer(palette = "Set1")
 p1
+
+m1 <- 
+  aov(unfum_C_mg_g ~ treatment*water_content*litter*day, data = filter(df, water_content != "non-incubated"))
+
+m1_beg <- # 3way interaction not significant thus removed
+    aov(unfum_C_mg_g ~ treatment*litter + water_content*litter + treatment*water_content, data = df_beg)
+
+m1_end <- # 3way interaction not significant thus removed 
+  aov(unfum_C_mg_g ~ treatment*litter + water_content*litter + treatment*water_content, data = df_end)
+
+shapiro_test(residuals(m1_end))
+df_end %>% levene_test(MBC_mg_g_soil ~ litter*water_content*treatment)
+
+summary(m1)
+summary(m1_beg)
+summary(m1_end)
+
+
+model1_beg <- lm(unfum_C_mg_g ~ litter * water_content, data = df_beg)
+df_beg %>%
+  group_by(litter) %>%
+  anova_test(unfum_C_mg_g ~ water_content, error = model1_beg)
+
+
+TukeyHSD(m1_beg)
 ```
 
 1. DOC was higher at the beginning than at the end of the incubation when litter was added, probably as a result of litter decomposition. When no litter was added, DOC was similar at the beginning and end of the incubation. 
@@ -47,7 +81,7 @@ p1
 
 ## Microbial biomass C
 ```{r MBC, echo = FALSE, warnings = FALSE, message = FALSE}
-p3 <- ggplot(df, aes(treatment, MBC_mg_g_soil)) + 
+p2 <- ggplot(df, aes(treatment, MBC_mg_g_soil)) + 
   geom_boxplot(aes(treatment, MBC_mg_g_soil, fill = day)) + 
   facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
   geom_point(aes(treatment, MBC_mg_g_soil, fill = day), 
@@ -55,7 +89,15 @@ p3 <- ggplot(df, aes(treatment, MBC_mg_g_soil)) +
              alpha = 0.5, size = 2, shape = 21) +
   labs(x = "Preincubation treatment", y = "Microbial biomass C (mg/g soil)") +
   theme_bw() + scale_fill_brewer(palette = "Set1")
-p3
+p2
+
+m2 <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df)
+m2_beg <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df_beg)
+m2_end <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df_end)
+
+summary(m2)
+summary(m2_beg)
+summary(m2_end)
 ```
 
 1. When no litter was added, MBC was higher at the end of the incubation that at the beginning increased with DW preincubaion, but was not different with Ca preincubation. Thus, MBC was somewhat higher with Ca than with DW at the beginning. MBC could have increased with time as more SOC was decomposed and made available. With CA MBC was as high at the beginning of the incubation as it was in the end.
@@ -67,13 +109,13 @@ p3
 
 ## Extracted and fumigated C
 ```{r fumigated, echo = FALSE, warnings = FALSE}
-p2 <- ggplot(df, aes(treatment, unfum_C_mg_g)) + 
-  geom_boxplot(aes(treatment, unfum_C_mg_g, fill = day)) + 
+p3 <- ggplot(df, aes(treatment, fum_C_mg_g)) + 
+  geom_boxplot(aes(treatment, fum_C_mg_g, fill = day)) + 
   facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
-  geom_point(aes(treatment, unfum_C_mg_g, fill = day), 
+  geom_point(aes(treatment, fum_C_mg_g, fill = day), 
              position = position_jitterdodge(jitter.width = 0.1),
              alpha = 0.5, size = 3, shape = 21) +
   labs(x = "Preincubation treatment", y = "Extractable and fumigated C (mg/g soil)") +
   theme_bw() + scale_fill_brewer(palette = "Set1")
-p2
+p3
 ```

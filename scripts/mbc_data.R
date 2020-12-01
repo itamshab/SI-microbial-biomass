@@ -9,14 +9,18 @@ library(here)
 
 # Parameters
   # input_file
-file_raw_data <- here("data-raw/mbc_aata.csv")
+mbc_raw_data <- here("data-raw/mbc_data.csv")
   
   # output_file
-file_out_data <- here("data/mbc_data.rds")
+mbc_out_data <- here("data/mbc_data.rds")
 # ============================================================================
 
-file_raw_data <- 
-  read_csv(here("data-raw/mbc_data.csv")) %>% 
-  filter(jar_ID != 28 & jar_ID != 39 & jar_ID != 46 & jar_ID != 44)
+mbc_data <- 
+  read_csv("data-raw/mbc_data.csv", 
+           col_types = cols(treatment = col_factor(levels = c("Ca","DW")), 
+                            litter = col_factor(levels = c("n","y"), ordered = FALSE), 
+                            water_content = col_factor(levels = c("low", "high", "non-incubated")),
+                            day = col_factor(levels = c("Initial", "Beginning", "End")))) %>% 
+  filter(jar_ID != 28 & jar_ID != 39 & jar_ID != 46 & jar_ID != 44) %>% 
+  write_rds(mbc_out_data)
 
-write_rds(file_raw_data, file_out_data)
