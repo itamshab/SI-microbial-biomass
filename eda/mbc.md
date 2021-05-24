@@ -1,46 +1,58 @@
-2020-11-30
+2021-05-19
 
-  - [K2SO4 0.05 M Extractable DOC](#k2so4-0.05-m-extractable-doc)
-  - [Microbial biomass C](#microbial-biomass-c)
-  - [Extracted and fumigated C](#extracted-and-fumigated-c)
+-   [K2SO4 0.05 M Extractable DOC](#k2so4-005-m-extractable-doc)
+-   [Microbial biomass C](#microbial-biomass-c)
+-   [Extracted and fumigated C](#extracted-and-fumigated-c)
+-   [Isotope ratios of unfumigated and fumigated
+    samples](#isotope-ratios-of-unfumigated-and-fumigated-samples)
+-   [MB13C](#mb13c)
 
 ## K2SO4 0.05 M Extractable DOC
 
-![](mbc_files/figure-gfm/DOC-1.png)<!-- -->
+    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
+    ## will replace the existing scale.
 
-    ##                                Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment                       1 0.0001 0.00014   0.019    0.892    
-    ## water_content                   2 0.0165 0.00827   1.081    0.344    
-    ## litter                          1 0.2383 0.23832  31.157 2.78e-07 ***
-    ## treatment:water_content         2 0.0171 0.00857   1.121    0.331    
-    ## treatment:litter                1 0.0001 0.00015   0.019    0.889    
-    ## water_content:litter            1 0.0114 0.01144   1.496    0.225    
-    ## treatment:water_content:litter  1 0.0000 0.00003   0.004    0.947    
-    ## Residuals                      85 0.6502 0.00765                     
+![](mbc_files/figure-gfm/DOC-1.png)<!-- -->![](mbc_files/figure-gfm/DOC-2.png)<!-- -->![](mbc_files/figure-gfm/DOC-3.png)<!-- -->
+
+    ##                                    Df Sum Sq Mean Sq F value  Pr(>F)    
+    ## treatment                           1 0.0119  0.0119  10.656 0.00164 ** 
+    ## water_content                       1 0.0002  0.0002   0.190 0.66447    
+    ## litter                              1 0.3061  0.3061 275.125 < 2e-16 ***
+    ## day                                 1 0.4260  0.4260 382.868 < 2e-16 ***
+    ## treatment:water_content             1 0.0001  0.0001   0.104 0.74772    
+    ## treatment:litter                    1 0.0004  0.0004   0.333 0.56551    
+    ## water_content:litter                1 0.0058  0.0058   5.257 0.02459 *  
+    ## treatment:day                       1 0.0050  0.0050   4.531 0.03648 *  
+    ## water_content:day                   1 0.0068  0.0068   6.138 0.01542 *  
+    ## litter:day                          1 0.2069  0.2069 185.943 < 2e-16 ***
+    ## treatment:water_content:litter      1 0.0008  0.0008   0.740 0.39245    
+    ## treatment:water_content:day         1 0.0044  0.0044   3.921 0.05127 .  
+    ## treatment:litter:day                1 0.0003  0.0003   0.244 0.62238    
+    ## water_content:litter:day            1 0.0088  0.0088   7.865 0.00638 ** 
+    ## treatment:water_content:litter:day  1 0.0017  0.0017   1.529 0.22008    
+    ## Residuals                          77 0.0857  0.0011                    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    ##                                Df Sum Sq Mean Sq F value  Pr(>F)    
-    ## treatment                       1 0.0087  0.0087   5.258 0.02796 *  
-    ## water_content                   1 0.0175  0.0175  10.623 0.00249 ** 
-    ## litter                          1 0.4238  0.4238 257.254 < 2e-16 ***
-    ## treatment:water_content         1 0.0004  0.0004   0.238 0.62856    
-    ## treatment:litter                1 0.0000  0.0000   0.001 0.97118    
-    ## water_content:litter            1 0.0241  0.0241  14.609 0.00052 ***
-    ## treatment:water_content:litter  1 0.0001  0.0001   0.052 0.82166    
-    ## Residuals                      35 0.0577  0.0016                    
+    ##                         Df Sum Sq Mean Sq F value  Pr(>F)    
+    ## treatment                1 0.0212  0.0212   9.845 0.00319 ** 
+    ## litter                   1 0.5005  0.5005 232.543 < 2e-16 ***
+    ## water_content            1 0.0031  0.0031   1.462 0.23377    
+    ## treatment:litter         1 0.0006  0.0006   0.272 0.60518    
+    ## litter:water_content     1 0.0152  0.0152   7.074 0.01120 *  
+    ## treatment:water_content  1 0.0034  0.0034   1.590 0.21463    
+    ## Residuals               40 0.0861  0.0022                    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    ##                                Df   Sum Sq  Mean Sq F value   Pr(>F)    
-    ## treatment                       1 0.000312 0.000312   6.322   0.0163 *  
-    ## water_content                   1 0.001437 0.001437  29.140 3.81e-06 ***
-    ## litter                          1 0.003588 0.003588  72.776 2.32e-10 ***
-    ## treatment:water_content         1 0.001255 0.001255  25.449 1.15e-05 ***
-    ## treatment:litter                1 0.000032 0.000032   0.643   0.4276    
-    ## water_content:litter            1 0.000076 0.000076   1.546   0.2213    
-    ## treatment:water_content:litter  1 0.000114 0.000114   2.312   0.1367    
-    ## Residuals                      38 0.001874 0.000049                     
+    ##                         Df   Sum Sq  Mean Sq F value   Pr(>F)    
+    ## treatment                1 0.000312 0.000312   6.116   0.0179 *  
+    ## litter                   1 0.003378 0.003378  66.274 6.15e-10 ***
+    ## water_content            1 0.001647 0.001647  32.325 1.42e-06 ***
+    ## treatment:litter         1 0.000052 0.000052   1.027   0.3171    
+    ## litter:water_content     1 0.000108 0.000108   2.120   0.1534    
+    ## treatment:water_content  1 0.001202 0.001202  23.592 1.96e-05 ***
+    ## Residuals               39 0.001988 0.000051                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -80,28 +92,38 @@
 
 ![](mbc_files/figure-gfm/MBC-1.png)<!-- -->
 
-    ##                                Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment                       1 0.0054  0.0054   0.211 0.647549    
-    ## water_content                   2 0.4772  0.2386   9.385 0.000214 ***
-    ## litter                          1 0.7532  0.7532  29.624 5.33e-07 ***
-    ## treatment:water_content         2 0.0857  0.0428   1.684 0.191908    
-    ## treatment:litter                1 0.0239  0.0239   0.941 0.334780    
-    ## water_content:litter            1 0.0013  0.0013   0.050 0.823825    
-    ## treatment:water_content:litter  1 0.0943  0.0943   3.711 0.057524 .  
-    ## Residuals                      82 2.0848  0.0254                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 3 observations deleted due to missingness
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
 
-    ##                                Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment                       1 0.0271  0.0271   0.785   0.3819    
-    ## water_content                   1 0.0623  0.0623   1.802   0.1884    
-    ## litter                          1 0.7622  0.7622  22.055 4.24e-05 ***
-    ## treatment:water_content         1 0.1867  0.1867   5.403   0.0262 *  
-    ## treatment:litter                1 0.0007  0.0007   0.019   0.8911    
-    ## water_content:litter            1 0.0101  0.0101   0.292   0.5925    
-    ## treatment:water_content:litter  1 0.2496  0.2496   7.222   0.0111 *  
-    ## Residuals                      34 1.1751  0.0346                     
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](mbc_files/figure-gfm/MBC-2.png)<!-- -->
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
+
+![](mbc_files/figure-gfm/MBC-3.png)<!-- -->
+
+    ##                             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment                    1 0.0011 0.00105   0.018  0.895
+    ## water_content                1 0.1373 0.13727   2.306  0.137
+    ## day                          1 0.0801 0.08008   1.345  0.253
+    ## treatment:water_content      1 0.0366 0.03661   0.615  0.438
+    ## treatment:day                1 0.0849 0.08493   1.427  0.240
+    ## water_content:day            1 0.0034 0.00343   0.058  0.812
+    ## treatment:water_content:day  1 0.1085 0.10855   1.824  0.185
+    ## Residuals                   38 2.2621 0.05953               
+    ## 1 observation deleted due to missingness
+
+    ##                                Df Sum Sq Mean Sq F value  Pr(>F)   
+    ## treatment                       1 0.1347  0.1347   2.087 0.15674   
+    ## water_content                   1 0.2458  0.2458   3.809 0.05839 . 
+    ## litter                          1 0.7306  0.7306  11.318 0.00176 **
+    ## treatment:water_content         1 0.0169  0.0169   0.262 0.61181   
+    ## treatment:litter                1 0.0125  0.0125   0.193 0.66286   
+    ## water_content:litter            1 0.0003  0.0003   0.005 0.94225   
+    ## treatment:water_content:litter  1 0.1484  0.1484   2.298 0.13779   
+    ## Residuals                      38 2.4528  0.0645                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 1 observation deleted due to missingness
@@ -148,3 +170,9 @@
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](mbc_files/figure-gfm/fumigated-1.png)<!-- -->
+
+## Isotope ratios of unfumigated and fumigated samples
+
+![](mbc_files/figure-gfm/unfum%20and%20fum%20isotope-1.png)<!-- -->![](mbc_files/figure-gfm/unfum%20and%20fum%20isotope-2.png)<!-- -->![](mbc_files/figure-gfm/unfum%20and%20fum%20isotope-3.png)<!-- -->![](mbc_files/figure-gfm/unfum%20and%20fum%20isotope-4.png)<!-- -->
+
+## MB13C

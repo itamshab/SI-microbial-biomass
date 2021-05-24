@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output: 
   github_document:
     toc: true
+
 ---
 
 ```{r setup, include=FALSE}
@@ -16,20 +17,69 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(here)
 
+mytheme <- theme_bw() + theme(panel.grid = element_blank()) + 
+  theme(axis.text.x = element_text(size = 15)) +  
+  theme(axis.text.y = element_text(size = 15)) +
+  theme(axis.title.x = element_text(size = 15)) +
+  theme(axis.title.y = element_text(size = 15)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_text(size = 15)) +
+  theme(strip.text.x = element_text(size = 15))
+
 # Parameters
-  file_data <- here("/data/mbc_data.rds")
-  
+  file_data <- here("data/mbc_data.rds")
+  isotope_file_data <- here("data/mbc_isotope_data.rds")
+  isotope_wide_file_data <- here("data/mbc_isotope_wide.rds")
 #===========================================================================
 
-# Code
+# load data
   df <- read_rds(file_data)
+  iso_df <- read_rds(isotope_file_data)
+  iso_wide <- read_rds(isotope_wide_file_data)
+
+# recode factor
+  df$litter <- recode(df$litter, 
+                      y = "Litter added", n = "No litter", 
+                      .default = levels(df$litter))
+  df$water_content <- recode(df$water_content, 
+                             high = "High water content", low = "Low water content",
+                             .default = levels(df$water_content))
   
+  iso_df$litter <- recode(iso_df$litter, 
+                      y = "Litter added", n = "No litter", 
+                      .default = levels(iso_df$litter))
+  iso_df$water_content <- recode(iso_df$water_content, 
+                             high = "High water content", low = "Low water content",
+                             .default = levels(iso_df$water_content))
+  
+  iso_wide$litter <- recode(iso_wide$litter, 
+                      y = "Litter added", n = "No litter", 
+                      .default = levels(iso_wide$litter))
+  iso_wide$water_content <- recode(iso_wide$water_content, 
+                             high = "High water content", low = "Low water content",
+                             .default = levels(iso_wide$water_content))
+
+
+  
+  # subsetting df's per sampling times
   df_beg <- df %>% 
     filter(day == "Beginning" & water_content != "non-incubated")
   
   df_end <- df %>% 
     filter(day == "End" & water_content != "non-incubated")
  
+  iso_df_beg <- iso_df %>% 
+    filter(day == "beginning" & water_content != "non-incubated")
+  
+  iso_df_end <- iso_df %>% 
+    filter(day == "end" & water_content != "non-incubated")
+  
+  iso_wide_beg <- iso_wide %>% 
+    filter(day == "beginning" & water_content != "non-incubated")
+  
+  iso_wide_end <- iso_wide %>% 
+    filter(day == "end" & water_content != "non-incubated")
+  
 ```
 
 ## K2SO4 0.05 M Extractable DOC
@@ -41,33 +91,76 @@ p1 <- ggplot(df, aes(treatment, unfum_C_mg_g)) +
              position = position_jitterdodge(jitter.width = 0.1),
              alpha = 0.5, size = 2, shape = 21) +
   labs(x = "Preincubation treatment", y = "Extractable DOC (mg/g soil)") +
-  theme_bw() + scale_fill_brewer(palette = "Set1")
-p1
+  theme_bw() + 
+  scale_fill_brewer(palette = "Set1") +  
+  scale_fill_discrete("Sampling time")
+
+p1 + mytheme
+
+p1_no_control <- ggplot(filter(df, water_content != "non-incubated"), aes(treatment, unfum_C_mg_g)) + 
+  geom_boxplot(aes(day, unfum_C_mg_g, fill = treatment), outlier.shape = NA) + 
+  facet_wrap(litter~water_content, nrow = 1, scales = "fixed") + 
+  geom_point(aes(day, unfum_C_mg_g, fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+  labs(x = "Sampling time", y = "Extractable DOC (mg/g soil)", fill = "Treatment") +
+  theme_bw() +   
+  scale_fill_brewer(palette = "Set1") 
+p1_no_control + mytheme
+
+p1_no_control_litter <- ggplot(filter(df, water_content != "non-incubated" & litter == "Litter added"), aes(treatment, unfum_C_mg_g)) + 
+  geom_boxplot(aes(day, unfum_C_mg_g, fill = treatment), outlier.shape = NA) + 
+    geom_point(aes(day, unfum_C_mg_g, fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+    facet_wrap(. ~ water_content, nrow = 1, scales = "fixed") + 
+  labs(x = "Sampling time", y = "Dissolved organic carbon (mg/g soil)", fill = "Treatment") +
+  theme_bw() +   
+  scale_fill_brewer(palette = "Set1") 
+
+p1_no_control_litter + mytheme + theme(legend.position = c(0.85,0.85)) 
 
 m1 <- 
   aov(unfum_C_mg_g ~ treatment*water_content*litter*day, data = filter(df, water_content != "non-incubated"))
 
-m1_beg <- # 3way interaction not significant thus removed
-    aov(unfum_C_mg_g ~ treatment*litter + water_content*litter + treatment*water_content, data = df_beg)
+m1_beg_litter <- # 3way interaction not significant thus removed
+    aov(unfum_C_mg_g ~ treatment*water_content, data = filter(df_beg, litter == "Litter added"))
+
+m1_beg_no_litter <- # 3way interaction not significant thus removed
+    aov(unfum_C_mg_g ~ treatment*water_content, data = filter(df_beg, litter == "No litter"))
+
+m1_end_litter <- # 3way interaction not significant thus removed
+    aov(unfum_C_mg_g ~ treatment*water_content, data = filter(df_end, litter == "Litter added"))
+
+m1_end_no_litter <- # 3way interaction not significant thus removed
+    aov(unfum_C_mg_g ~ treatment*water_content, data = filter(df_end, litter == "No litter"))
 
 m1_end <- # 3way interaction not significant thus removed 
   aov(unfum_C_mg_g ~ treatment*litter + water_content*litter + treatment*water_content, data = df_end)
 
-shapiro_test(residuals(m1_end))
-df_end %>% levene_test(MBC_mg_g_soil ~ litter*water_content*treatment)
+#shapiro_test(residuals(m1_end))
+#df_end %>% levene_test(MBC_mg_g_soil ~ litter*water_content*treatment)
 
 summary(m1)
-summary(m1_beg)
+summary(m1_beg_litter)
+summary(m1_beg_no_litter)
+summary(m1_end_litter)
+summary(m1_end_no_litter)
+
 summary(m1_end)
+TukeyHSD(m1_beg_no_litter)
+TukeyHSD(m1_end_no_litter)
+TukeyHSD(m1_end_litter)
 
 
-model1_beg <- lm(unfum_C_mg_g ~ litter * water_content, data = df_beg)
-df_beg %>%
-  group_by(litter) %>%
-  anova_test(unfum_C_mg_g ~ water_content, error = model1_beg)
+
+#model1_beg <- lm(unfum_C_mg_g ~ litter * water_content, data = df_beg)
+#df_beg %>%
+#  group_by(litter) %>%
+#  anova_test(unfum_C_mg_g ~ water_content, error = model1_beg)
 
 
-TukeyHSD(m1_beg)
+#TukeyHSD(m1_beg)
 ```
 
 1. DOC was higher at the beginning than at the end of the incubation when litter was added, probably as a result of litter decomposition. When no litter was added, DOC was similar at the beginning and end of the incubation. 
@@ -91,7 +184,30 @@ p2 <- ggplot(df, aes(treatment, MBC_mg_g_soil)) +
   theme_bw() + scale_fill_brewer(palette = "Set1")
 p2
 
-m2 <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df)
+p2_no_control <- ggplot(filter(df, water_content != "non-incubated"), aes(treatment, MBC_mg_g_soil)) + 
+  geom_boxplot(aes(day, MBC_mg_g_soil, fill = treatment), outlier.shape = NA) + 
+  facet_wrap(litter~water_content, nrow = 1, scales = "free") + 
+  geom_point(aes(day, MBC_mg_g_soil, fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+  labs(x = "Sampling time", y = "Microbial biomass C (mg/g soil)", fill = "Treatment") +
+  theme_bw() +   
+  scale_fill_brewer(palette = "Set1") 
+p2_no_control + mytheme
+
+p2_no_control_litter <- ggplot(filter(df, water_content != "non-incubated" & litter == "Litter added"), aes(treatment, unfum_C_mg_g)) + 
+  geom_boxplot(aes(day, MBC_mg_g_soil, fill = treatment), outlier.shape = NA) + 
+    geom_point(aes(day, MBC_mg_g_soil, fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.1),
+             alpha = 0.5, size = 2, shape = 21) +
+    facet_wrap(. ~ water_content, nrow = 1, scales = "fixed") + 
+  labs(x = "Sampling time", y = "Microbial biomass carbon (mg/g soil)", fill = "Treatment") +
+  theme_bw() +   
+  scale_fill_brewer(palette = "Set1") 
+
+p2_no_control_litter + mytheme + theme(legend.position = c(0.85,0.85)) 
+
+m2 <- aov(MBC_mg_g_soil ~ treatment*water_content*day, data = filter(df, litter == "Litter added"))
 m2_beg <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df_beg)
 m2_end <- aov(MBC_mg_g_soil ~ treatment*water_content*litter, data = df_end)
 
@@ -111,7 +227,7 @@ summary(m2_end)
 ```{r fumigated, echo = FALSE, warnings = FALSE}
 p3 <- ggplot(df, aes(treatment, fum_C_mg_g)) + 
   geom_boxplot(aes(treatment, fum_C_mg_g, fill = day)) + 
-  facet_wrap(litter~water_content, nrow = 2, scales = "fixed") + 
+  facet_wrap(litter~water_content, nrow = 2, scales = "free") + 
   geom_point(aes(treatment, fum_C_mg_g, fill = day), 
              position = position_jitterdodge(jitter.width = 0.1),
              alpha = 0.5, size = 3, shape = 21) +
@@ -119,3 +235,54 @@ p3 <- ggplot(df, aes(treatment, fum_C_mg_g)) +
   theme_bw() + scale_fill_brewer(palette = "Set1")
 p3
 ```
+
+## Isotope ratios of unfumigated and fumigated samples
+```{r unfum and fum isotope, echo=FALSE, warning=FALSE}
+p4 <- ggplot(filter(iso_df, litter == "Litter added" & fraction == "fum_DOC"), aes(day, delta13C)) + 
+  facet_wrap(. ~ water_content) + 
+  geom_point(aes(fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.05), 
+             alpha = 0.5, size = 3, shape = 21) + 
+  geom_boxplot(aes(fill = treatment), outlier.shape = NA) + 
+  scale_fill_brewer(palette = "Set1") 
+
+p4 + mytheme
+
+p5 <- ggplot(filter(iso_df, litter == "Litter added"), aes(fraction, delta13C)) + 
+  facet_wrap(day ~ water_content, scales = "free") + 
+  geom_point(aes(fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.1), 
+             alpha = 0.5, size = 3, shape = 21) + 
+  geom_boxplot(aes(fill = treatment), outlier.shape = NA) + 
+  scale_fill_brewer(palette = "Set1") 
+
+p5 + mytheme
+
+p6 <- ggplot(filter(iso_df, litter == "Litter added"), aes(fraction, delta15N)) + 
+  facet_wrap(day ~ water_content) + 
+  geom_point(aes(fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.05), 
+             alpha = 0.5, size = 3, shape = 21) + 
+  scale_fill_brewer(palette = "Set1") 
+
+p6 + mytheme
+
+p7 <- ggplot(filter(iso_df, litter == "Litter added"), aes(fraction, delta13C)) + 
+  facet_wrap(day ~ water_content) + 
+  geom_point(aes(fill = treatment), 
+             position = position_jitterdodge(jitter.width = 0.05), 
+             alpha = 0.5, size = 3, shape = 21) + 
+  scale_fill_brewer(palette = "Set1") 
+
+p7 + mytheme
+```
+
+## MB13C
+```{r, echo = FALSE, warnings = FALSE}
+
+#ggplot(filter(iso_wide, litter == "Litter added"), aes(treatment, mb_13c_per_sub)) + 
+#  geom_point() + 
+#  facet_grid((water_content ~ day)) + theme_bw()
+
+```
+
